@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melodia - Avaliação de Álbuns</title>
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #e6e6e6;
+            --accent-color: #4cc9f0;
+            --card-color: #16213e;
+        }
+
+        * {
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Tela de Autenticação */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .auth-box {
+            background-color: var(--card-color);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            text-align: center;
+        }
+
+        .auth-box h2 {
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tab.active {
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Página Principal */
+        .main-content {
+            display: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .settings-btn, .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .settings-btn:hover, .logout-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* Formulário de Avaliação */
+        .evaluation-form {
+            background-color: var(--card-color);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .evaluation-form h2 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .track-list {
+            margin-top: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .track-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .track-item input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .track-item input[type="number"] {
+            width: 80px;
+        }
+
+        .album-cover-preview {
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .album-cover-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Biblioteca - Estilo Compacto */
+        .library {
+            margin-top: 40px;
+        }
+
+        .library h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .artist-section {
+            margin-bottom: 30px;
+        }
+
+        .artist-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(76, 201, 240, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .artist-name .favorite-btn {
+            background: none;
+            border: none;
+            color: gold;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .albums-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .album-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            width: 180px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .album-cover {
+            width: 100%;
+            height: 150px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .album-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .album-year {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        .album-stats {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .album-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
+
+        .edit-btn {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .review-btn {
+            background-color: rgba(76, 240, 120, 0.2);
+            color: #4cf078;
+            border: 1px solid #4cf078;
+        }
+
+        .delete-btn {
+            background-color: rgba(255, 0, 0, 0.2);
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        /* Modal de Visualização do Álbum */
+        .album-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .album-modal-content {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-album-cover {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-album-info {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-album-artist {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .modal-album-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .modal-album-year {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
+
+        .modal-album-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(76, 201, 240, 0.3);
+        }
+
+        .track-list-modal {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .track-item-modal {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .track-rating-modal {
+            color: gold;
+        }
+
+        .album-review {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .review-form {
+            margin-top: 20px;
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: none;
+            min-height: 100px;
+            margin-bottom: 10px;
+        }
+
+        /* Configurações */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-content {
+            background-color: var(--card-color);
+            padding: 30px;
+            border-radius: 15px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.selected {
+            border-color: white;
+        }
+
+        .theme-preview {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            background-color: var(--preview-bg, #16213e);
+            color: var(--preview-text, #e6e6e6);
+        }
+
+        /* Barra de pesquisa */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 40px;
+            border-radius: 25px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .album-card {
+                width: 150px;
+            }
+            
+            .auth-box {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .albums-container {
+                justify-content: center;
+            }
+            
+            .album-card {
+                width: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Autenticação -->
+    <div class="auth-container" id="auth-container">
+        <div class="auth-box">
+            <h2>Melodia</h2>
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchTab('register')">Cadastro</div>
+            </div>
+            
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="button" class="btn" onclick="login()">Entrar</button>
+            </form>
+            
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-name">Nome</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Senha</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirmar Senha</label>
+                    <input type="password" id="register-confirm-password" required>
+                </div>
+                <button type="button" class="btn" onclick="register()">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <div class="header">
+                <div class="logo">Melodia</div>
+                <div class="user-actions">
+                    <button class="settings-btn" onclick="openSettings()">Configurações</button>
+                    <button class="logout-btn" onclick="logout()">Sair</button>
+                </div>
+            </div>
+            
+            <!-- Barra de pesquisa -->
+            <div class="search-container">
+                <i class="search-icon">🔍</i>
+                <input type="text" class="search-input" id="search-input" placeholder="Pesquisar por artista ou álbum..." oninput="filterAlbums()">
+            </div>
+            
+            <!-- Formulário de Avaliação -->
+            <div class="evaluation-form">
+                <h2>Avaliar Novo Álbum</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="artist-name">Nome do Cantor/Banda</label>
+                            <input type="text" id="artist-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="album-name">Nome do Álbum</label>
+                            <input type="text" id="album-name" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="release-date">Data de Lançamento</label>
+                            <input type="date" id="release-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="evaluation-date">Data da Avaliação</label>
+                            <input type="date" id="evaluation-date" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="track-count">Quantidade de Faixas</label>
+                    <input type="number" id="track-count" min="1" required onchange="generateTrackInputs()">
+                </div>
+                
+                <div id="track-list-container" class="track-list" style="display: none;">
+                    <h3>Faixas do Álbum</h3>
+                    <div id="track-inputs"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Capa do Álbum</label>
+                    <div class="album-cover-preview" id="album-cover-preview">
+                        <span>Nenhuma imagem selecionada</span>
+                    </div>
+                    <input type="file" id="album-cover" accept="image/*" onchange="previewAlbumCover()">
+                </div>
+                
+                <button type="button" class="btn" onclick="saveAlbum()">Salvar Avaliação</button>
+            </div>
+            
+            <!-- Biblioteca -->
+            <div class="library">
+      <h2>Minha Biblioteca</h2>
+                <div id="artist-list"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Visualização do Álbum -->
+    <div class="album-modal" id="album-modal">
+        <div class="album-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Álbum</h3>
+                <button class="close-modal" onclick="closeAlbumModal()">&times;</button>
+            </div>
+            
+            <div class="modal-album-cover" id="modal-album-cover">
+                <span>Sem capa</span>
+            </div>
+            
+            <div class="modal-album-info">
+                <div class="modal-album-artist" id="modal-album-artist"></div>
+                <div class="modal-album-title" id="modal-album-title"></div>
+                <div class="modal-album-year" id="modal-album-year"></div>
+                
+                <div class="modal-album-stats">
+                    <div>Faixas: <span id="modal-track-count"></span></div>
+                    <div>Média: <span id="modal-average-rating"></span></div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="section-title">Faixas</h4>
+                <ul class="track-list-modal" id="modal-track-list">
+                    <!-- Lista de faixas será inserida aqui -->
+                </ul>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="section-title">Minha Review</h4>
+                <div class="album-review" id="album-review-content">
+                    Nenhuma review cadastrada ainda.
+                </div>
+                
+                <div class="review-form">
+                    <textarea class="review-textarea" id="review-textarea" placeholder="Escreva sua review deste álbum..."></textarea>
+                    <button class="btn" onclick="saveReview()">Salvar Review</button>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <button class="btn delete-btn" onclick="deleteAlbum(currentAlbumId); closeAlbumModal()" 
+                        style="background-color: rgba(255, 0, 0, 0.2); border: 1px solid #ff4d4d; color: #ff4d4d;">
+                    Excluir Álbum
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Configurações -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3 class="settings-title">Configurações</h3>
+                <button class="close-settings" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Cor de Fundo</label>
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #1a1a2e;" onclick="changeThemeColor('bg', '#1a1a2e')"></div>
+                    <div class="color-option" style="background-color: #0f0e17;" onclick="changeThemeColor('bg', '#0f0e17')"></div>
+                    <div class="color-option" style="background-color: #242423;" onclick="changeThemeColor('bg', '#242423')"></div>
+                    <div class="color-option" style="background-color: #01161e;" onclick="changeThemeColor('bg', '#01161e')"></div>
+                    <div class="color-option" style="background-color: #1e1e24;" onclick="changeThemeColor('bg', '#1e1e24')"></div>
+                    <div class="color-option" style="background-color: #121212;" onclick="changeThemeColor('bg', '#121212')"></div>
+                    <div class="color-option" style="background-color: #0d1b2a;" onclick="changeThemeColor('bg', '#0d1b2a')"></div>
+                    <div class="color-option" style="background-color: #1b263b;" onclick="changeThemeColor('bg', '#1b263b')"></div>
+                    <div class="color-option" style="background-color: #2b2d42;" onclick="changeThemeColor('bg', '#2b2d42')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('bg', '#212529')"></div>
+                    <div class="color-option" style="background-color: #10002b;" onclick="changeThemeColor('bg', '#10002b')"></div>
+                    <div class="color-option" style="background-color: #14213d;" onclick="changeThemeColor('bg', '#14213d')"></div>
+                    <div class="color-option" style="background-color: #1b4332;" onclick="changeThemeColor('bg', '#1b4332')"></div>
+                    <div class="color-option" style="background-color: #3a0ca3;" onclick="changeThemeColor('bg', '#3a0ca3')"></div>
+                    <div class="color-option" style="background-color: #480ca8;" onclick="changeThemeColor('bg', '#480ca8')"></div>
+                    <div class="color-option" style="background-color: #560bad;" onclick="changeThemeColor('bg', '#560bad')"></div>
+                    <div class="color-option" style="background-color: #7209b7;" onclick="changeThemeColor('bg', '#7209b7')"></div>
+                    <div class="color-option" style="background-color: #b5179e;" onclick="changeThemeColor('bg', '#b5179e')"></div>
+                    <div class="color-option" style="background-color: #f72585;" onclick="changeThemeColor('bg', '#f72585')"></div>
+                    <div class="color-option" style="background-color: #4cc9f0;" onclick="changeThemeColor('bg', '#4cc9f0')"></div>
+                    <div class="color-option" style="background-color: #4361ee;" onclick="changeThemeColor('bg', '#4361ee')"></div>
+                    <div class="color-option" style="background-color: #3f37c9;" onclick="changeThemeColor('bg', '#3f37c9')"></div>
+                    <div class="color-option" style="background-color: #4895ef;" onclick="changeThemeColor('bg', '#4895ef')"></div>
+                    <div class="color-option" style="background-color: #4cc9f0;" onclick="changeThemeColor('bg', '#4cc9f0')"></div>
+                    <div class="color-option" style="background-color: #2d6a4f;" onclick="changeThemeColor('bg', '#2d6a4f')"></div>
+                    <div class="color-option" style="background-color: #1b4332;" onclick="changeThemeColor('bg', '#1b4332')"></div>
+                    <div class="color-option" style="background-color: #40916c;" onclick="changeThemeColor('bg', '#40916c')"></div>
+                    <div class="color-option" style="background-color: #52b788;" onclick="changeThemeColor('bg', '#52b788')"></div>
+                    <div class="color-option" style="background-color: #74c69d;" onclick="changeThemeColor('bg', '#74c69d')"></div>
+                    <div class="color-option" style="background-color: #95d5b2;" onclick="changeThemeColor('bg', '#95d5b2')"></div>
+                    <div class="color-option" style="background-color: #b7e4c7;" onclick="changeThemeColor('bg', '#b7e4c7')"></div>
+                    <div class="color-option" style="background-color: #d8f3dc;" onclick="changeThemeColor('bg', '#d8f3dc')"></div>
+                    <div class="color-option" style="background-color: #2b2d42;" onclick="changeThemeColor('bg', '#2b2d42')"></div>
+                    <div class="color-option" style="background-color: #8d99ae;" onclick="changeThemeColor('bg', '#8d99ae')"></div>
+                    <div class="color-option" style="background-color: #edf2f4;" onclick="changeThemeColor('bg', '#edf2f4')"></div>
+                    <div class="color-option" style="background-color: #ef233c;" onclick="changeThemeColor('bg', '#ef233c')"></div>
+                    <div class="color-option" style="background-color: #d90429;" onclick="changeThemeColor('bg', '#d90429')"></div>
+                    <div class="color-option" style="background-color: #ff758f;" onclick="changeThemeColor('bg', '#ff758f')"></div>
+                    <div class="color-option" style="background-color: #ff8fa3;" onclick="changeThemeColor('bg', '#ff8fa3')"></div>
+                    <div class="color-option" style="background-color: #ffb3c1;" onclick="changeThemeColor('bg', '#ffb3c1')"></div>
+                    <div class="color-option" style="background-color: #ffccd5;" onclick="changeThemeColor('bg', '#ffccd5')"></div>
+                    <div class="color-option" style="background-color: #fff0f3;" onclick="changeThemeColor('bg', '#fff0f3')"></div>
+                    <div class="color-option" style="background-color: #ff9e00;" onclick="changeThemeColor('bg', '#ff9e00')"></div>
+                    <div class="color-option" style="background-color: #ff9100;" onclick="changeThemeColor('bg', '#ff9100')"></div>
+                    <div class="color-option" style="background-color: #ff8500;" onclick="changeThemeColor('bg', '#ff8500')"></div>
+                    <div class="color-option" style="background-color: #ff7900;" onclick="changeThemeColor('bg', '#ff7900')"></div>
+                    <div class="color-option" style="background-color: #ff6d00;" onclick="changeThemeColor('bg', '#ff6d00')"></div>
+                    <div class="color-option" style="background-color: #ff5400;" onclick="changeThemeColor('bg', '#ff5400')"></div>
+                    <div class="color-option" style="background-color: #ff4800;" onclick="changeThemeColor('bg', '#ff4800')"></div>
+                    <div class="color-option" style="background-color: #ff3d00;" onclick="changeThemeColor('bg', '#ff3d00')"></div>
+                    <div class="color-option" style="background-color: #ff2b00;" onclick="changeThemeColor('bg', '#ff2b00')"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Cor do Texto</label>
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #e6e6e6;" onclick="changeThemeColor('text', '#e6e6e6')"></div>
+                    <div class="color-option" style="background-color: #ffffff;" onclick="changeThemeColor('text', '#ffffff')"></div>
+                    <div class="color-option" style="background-color: #f8f9fa;" onclick="changeThemeColor('text', '#f8f9fa')"></div>
+                    <div class="color-option" style="background-color: #e9ecef;" onclick="changeThemeColor('text', '#e9ecef')"></div>
+                    <div class="color-option" style="background-color: #dee2e6;" onclick="changeThemeColor('text', '#dee2e6')"></div>
+                    <div class="color-option" style="background-color: #ced4da;" onclick="changeThemeColor('text', '#ced4da')"></div>
+                    <div class="color-option" style="background-color: #adb5bd;" onclick="changeThemeColor('text', '#adb5bd')"></div>
+                    <div class="color-option" style="background-color: #6c757d;" onclick="changeThemeColor('text', '#6c757d')"></div>
+                    <div class="color-option" style="background-color: #495057;" onclick="changeThemeColor('text', '#495057')"></div>
+                    <div class="color-option" style="background-color: #343a40;" onclick="changeThemeColor('text', '#343a40')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('text', '#212529')"></div>
+                    <div class="color-option" style="background-color: #f8f9fa;" onclick="changeThemeColor('text', '#f8f9fa')"></div>
+                    <div class="color-option" style="background-color: #e9ecef;" onclick="changeThemeColor('text', '#e9ecef')"></div>
+                    <div class="color-option" style="background-color: #dee2e6;" onclick="changeThemeColor('text', '#dee2e6')"></div>
+                    <div class="color-option" style="background-color: #ced4da;" onclick="changeThemeColor('text', '#ced4da')"></div>
+                    <div class="color-option" style="background-color: #adb5bd;" onclick="changeThemeColor('text', '#adb5bd')"></div>
+                    <div class="color-option" style="background-color: #6c757d;" onclick="changeThemeColor('text', '#6c757d')"></div>
+                    <div class="color-option" style="background-color: #495057;" onclick="changeThemeColor('text', '#495057')"></div>
+                    <div class="color-option" style="background-color: #343a40;" onclick="changeThemeColor('text', '#343a40')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('text', '#212529')"></div>
+                    <div class="color-option" style="background-color: #f8f9fa;" onclick="changeThemeColor('text', '#f8f9fa')"></div>
+                    <div class="color-option" style="background-color: #e9ecef;" onclick="changeThemeColor('text', '#e9ecef')"></div>
+                    <div class="color-option" style="background-color: #dee2e6;" onclick="changeThemeColor('text', '#dee2e6')"></div>
+                    <div class="color-option" style="background-color: #ced4da;" onclick="changeThemeColor('text', '#ced4da')"></div>
+                    <div class="color-option" style="background-color: #adb5bd;" onclick="changeThemeColor('text', '#adb5bd')"></div>
+                    <div class="color-option" style="background-color: #6c757d;" onclick="changeThemeColor('text', '#6c757d')"></div>
+                    <div class="color-option" style="background-color: #495057;" onclick="changeThemeColor('text', '#495057')"></div>
+                    <div class="color-option" style="background-color: #343a40;" onclick="changeThemeColor('text', '#343a40')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('text', '#212529')"></div>
+                    <div class="color-option" style="background-color: #f8f9fa;" onclick="changeThemeColor('text', '#f8f9fa')"></div>
+                    <div class="color-option" style="background-color: #e9ecef;" onclick="changeThemeColor('text', '#e9ecef')"></div>
+                    <div class="color-option" style="background-color: #dee2e6;" onclick="changeThemeColor('text', '#dee2e6')"></div>
+                    <div class="color-option" style="background-color: #ced4da;" onclick="changeThemeColor('text', '#ced4da')"></div>
+                    <div class="color-option" style="background-color: #adb5bd;" onclick="changeThemeColor('text', '#adb5bd')"></div>
+                    <div class="color-option" style="background-color: #6c757d;" onclick="changeThemeColor('text', '#6c757d')"></div>
+                    <div class="color-option" style="background-color: #495057;" onclick="changeThemeColor('text', '#495057')"></div>
+                    <div class="color-option" style="background-color: #343a40;" onclick="changeThemeColor('text', '#343a40')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('text', '#212529')"></div>
+                    <div class="color-option" style="background-color: #f8f9fa;" onclick="changeThemeColor('text', '#f8f9fa')"></div>
+                    <div class="color-option" style="background-color: #e9ecef;" onclick="changeThemeColor('text', '#e9ecef')"></div>
+                    <div class="color-option" style="background-color: #dee2e6;" onclick="changeThemeColor('text', '#dee2e6')"></div>
+                    <div class="color-option" style="background-color: #ced4da;" onclick="changeThemeColor('text', '#ced4da')"></div>
+                    <div class="color-option" style="background-color: #adb5bd;" onclick="changeThemeColor('text', '#adb5bd')"></div>
+                    <div class="color-option" style="background-color: #6c757d;" onclick="changeThemeColor('text', '#6c757d')"></div>
+                    <div class="color-option" style="background-color: #495057;" onclick="changeThemeColor('text', '#495057')"></div>
+                    <div class="color-option" style="background-color: #343a40;" onclick="changeThemeColor('text', '#343a40')"></div>
+                    <div class="color-option" style="background-color: #212529;" onclick="changeThemeColor('text', '#212529')"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Cor de Destaque</label>
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #4cc9f0;" onclick="changeThemeColor('accent', '#4cc9f0')"></div>
+                    <div class="color-option" style="background-color: #7209b7;" onclick="changeThemeColor('accent', '#7209b7')"></div>
+                    <div class="color-option" style="background-color: #f72585;" onclick="changeThemeColor('accent', '#f72585')"></div>
+                    <div class="color-option" style="background-color: #4ad66d;" onclick="changeThemeColor('accent', '#4ad66d')"></div>
+                    <div class="color-option" style="background-color: #f77f00;" onclick="changeThemeColor('accent', '#f77f00')"></div>
+                    <div class="color-option" style="background-color: #4361ee;" onclick="changeThemeColor('accent', '#4361ee')"></div>
+                    <div class="color-option" style="background-color: #3a0ca3;" onclick="changeThemeColor('accent', '#3a0ca3')"></div>
+                    <div class="color-option" style="background-color: #480ca8;" onclick="changeThemeColor('accent', '#480ca8')"></div>
+                    <div class="color-option" style="background-color: #560bad;" onclick="changeThemeColor('accent', '#560bad')"></div>
+                    <div class="color-option" style="background-color: #b5179e;" onclick="changeThemeColor('accent', '#b5179e')"></div>
+                    <div class="color-option" style="background-color: #f72585;" onclick="changeThemeColor('accent', '#f72585')"></div>
+                    <div class="color-option" style="background-color: #4895ef;" onclick="changeThemeColor('accent', '#4895ef')"></div>
+                    <div class="color-option" style="background-color: #4cc9f0;" onclick="changeThemeColor('accent', '#4cc9f0')"></div>
+                    <div class="color-option" style="background-color: #2d6a4f;" onclick="changeThemeColor('accent', '#2d6a4f')"></div>
+                    <div class="color-option" style="background-color: #1b4332;" onclick="changeThemeColor('accent', '#1b4332')"></div>
+                    <div class="color-option" style="background-color: #40916c;" onclick="changeThemeColor('accent', '#40916c')"></div>
+                    <div class="color-option" style="background-color: #52b788;" onclick="changeThemeColor('accent', '#52b788')"></div>
+                    <div class="color-option" style="background-color: #74c69d;" onclick="changeThemeColor('accent', '#74c69d')"></div>
+                    <div class="color-option" style="background-color: #95d5b2;" onclick="changeThemeColor('accent', '#95d5b2')"></div>
+                    <div class="color-option" style="background-color: #b7e4c7;" onclick="changeThemeColor('accent', '#b7e4c7')"></div>
+                    <div class="color-option" style="background-color: #d8f3dc;" onclick="changeThemeColor('accent', '#d8f3dc')"></div>
+                    <div class="color-option" style="background-color: #2b2d42;" onclick="changeThemeColor('accent', '#2b2d42')"></div>
+                    <div class="color-option" style="background-color: #8d99ae;" onclick="changeThemeColor('accent', '#8d99ae')"></div>
+                    <div class="color-option" style="background-color: #edf2f4;" onclick="changeThemeColor('accent', '#edf2f4')"></div>
+                    <div class="color-option" style="background-color: #ef233c;" onclick="changeThemeColor('accent', '#ef233c')"></div>
+                    <div class="color-option" style="background-color: #d90429;" onclick="changeThemeColor('accent', '#d90429')"></div>
+                    <div class="color-option" style="background-color: #ff758f;" onclick="changeThemeColor('accent', '#ff758f')"></div>
+                    <div class="color-option" style="background-color: #ff8fa3;" onclick="changeThemeColor('accent', '#ff8fa3')"></div>
+                    <div class="color-option" style="background-color: #ffb3c1;" onclick="changeThemeColor('accent', '#ffb3c1')"></div>
+                    <div class="color-option" style="background-color: #ffccd5;" onclick="changeThemeColor('accent', '#ffccd5')"></div>
+                    <div class="color-option" style="background-color: #fff0f3;" onclick="changeThemeColor('accent', '#fff0f3')"></div>
+                    <div class="color-option" style="background-color: #ff9e00;" onclick="changeThemeColor('accent', '#ff9e00')"></div>
+                    <div class="color-option" style="background-color: #ff9100;" onclick="changeThemeColor('accent', '#ff9100')"></div>
+                    <div class="color-option" style="background-color: #ff8500;" onclick="changeThemeColor('accent', '#ff8500')"></div>
+                    <div class="color-option" style="background-color: #ff7900;" onclick="changeThemeColor('accent', '#ff7900')"></div>
+                    <div class="color-option" style="background-color: #ff6d00;" onclick="changeThemeColor('accent', '#ff6d00')"></div>
+                    <div class="color-option" style="background-color: #ff5400;" onclick="changeThemeColor('accent', '#ff5400')"></div>
+                    <div class="color-option" style="background-color: #ff4800;" onclick="changeThemeColor('accent', '#ff4800')"></div>
+                    <div class="color-option" style="background-color: #ff3d00;" onclick="changeThemeColor('accent', '#ff3d00')"></div>
+                    <div class="color-option" style="background-color: #ff2b00;" onclick="changeThemeColor('accent', '#ff2b00')"></div>
+                    <div class="color-option" style="background-color: #ff0000;" onclick="changeThemeColor('accent', '#ff0000')"></div>
+                    <div class="color-option" style="background-color: #ff00ff;" onclick="changeThemeColor('accent', '#ff00ff')"></div>
+                    <div class="color-option" style="background-color: #00ffff;" onclick="changeThemeColor('accent', '#00ffff')"></div>
+                    <div class="color-option" style="background-color: #ffff00;" onclick="changeThemeColor('accent', '#ffff00')"></div>
+                    <div class="color-option" style="background-color: #00ff00;" onclick="changeThemeColor('accent', '#00ff00')"></div>
+                    <div class="color-option" style="background-color: #0000ff;" onclick="changeThemeColor('accent', '#0000ff')"></div>
+                    <div class="color-option" style="background-color: #ff9900;" onclick="changeThemeColor('accent', '#ff9900')"></div>
+                    <div class="color-option" style="background-color: #9900ff;" onclick="changeThemeColor('accent', '#9900ff')"></div>
+                    <div class="color-option" style="background-color: #0099ff;" onclick="changeThemeColor('accent', '#0099ff')"></div>
+                    <div class="color-option" style="background-color: #ff0099;" onclick="changeThemeColor('accent', '#ff0099')"></div>
+                    <div class="color-option" style="background-color: #99ff00;" onclick="changeThemeColor('accent', '#99ff00')"></div>
+                    <div class="color-option" style="background-color: #00ff99;" onclick="changeThemeColor('accent', '#00ff99')"></div>
+                    <div class="color-option" style="background-color: #ff6600;" onclick="changeThemeColor('accent', '#ff6600')"></div>
+                    <div class="color-option" style="background-color: #6600ff;" onclick="changeThemeColor('accent', '#6600ff')"></div>
+                    <div class="color-option" style="background-color: #0066ff;" onclick="changeThemeColor('accent', '#0066ff')"></div>
+                    <div class="color-option" style="background-color: #ff0066;" onclick="changeThemeColor('accent', '#ff0066')"></div>
+                    <div class="color-option" style="background-color: #66ff00;" onclick="changeThemeColor('accent', '#66ff00')"></div>
+                    <div class="color-option" style="background-color: #00ff66;" onclick="changeThemeColor('accent', '#00ff66')"></div>
+                </div>
+            </div>
+            <div class="theme-preview">
+                <h4>Prévia do Tema</h4>
+                <p>Esta é uma prévia de como ficará seu tema personalizado.</p>
+                <button style="background-color: var(--accent-color); border: none; padding: 8px 16px; border-radius: 5px; margin-top: 10px;">Botão de Exemplo</button>
+            </div>
+            
+            <button class="btn" onclick="saveThemeSettings()" style="margin-top: 20px;">Salvar Configurações</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let currentUser = null;
+        let albums = JSON.parse(localStorage.getItem('albums')) || [];
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentAlbumId = null;
+        let favoriteArtists = JSON.parse(localStorage.getItem('favoriteArtists')) || {};
+        
+        // Funções de autenticação
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('register-form').classList.add('active');
+            }
+        }
+        
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                loadLibrary();
+                loadUserTheme();
+            } else {
+                alert('Email ou senha incorretos!');
+            }
+        }
+        
+        function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                alert('Este email já está cadastrado!');
+                return;
+            }
+            
+            const newUser = { id: Date.now(), name, email, password };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            alert('Cadastro realizado com sucesso! Faça login para continuar.');
+            switchTab('login');
+            
+            // Limpar formulário
+            document.getElementById('register-form').reset();
+        }
+        
+        function logout() {
+            currentUser = null;
+            document.getElementById('auth-container').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-form').reset();
+        }
+        
+        // Funções do álbum
+        function generateTrackInputs() {
+            const trackCount = parseInt(document.getElementById('track-count').value);
+            const container = document.getElementById('track-inputs');
+            const trackListContainer = document.getElementById('track-list-container');
+            
+            container.innerHTML = '';
+            
+            if (trackCount > 0) {
+                trackListContainer.style.display = 'block';
+                
+                for (let i = 0; i < trackCount; i++) {
+                    const trackItem = document.createElement('div');
+                    trackItem.className = 'track-item';
+                    trackItem.innerHTML = `
+                        <input type="text" placeholder="Nome da faixa ${i + 1}" class="track-name" required>
+                        <input type="number" min="0" max="10" step="0.1" placeholder="Nota" class="track-rating" required>
+                    `;
+                    container.appendChild(trackItem);
+                }
+            } else {
+                trackListContainer.style.display = 'none';
+            }
+        }
+        
+        function previewAlbumCover() {
+            const fileInput = document.getElementById('album-cover');
+            const preview = document.getElementById('album-cover-preview');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Capa do Álbum">`;
+                }
+                
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+        
+        function saveAlbum() {
+            const artistName = document.getElementById('artist-name').value;
+            const albumName = document.getElementById('album-name').value;
+            const releaseDate = document.getElementById('release-date').value;
+            const evaluationDate = document.getElementById('evaluation-date').value;
+            const trackCount = parseInt(document.getElementById('track-count').value);
+            
+            // Validar campos obrigatórios
+            if (!artistName || !albumName || !releaseDate || !evaluationDate || !trackCount) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            // Coletar faixas
+            const trackInputs = document.querySelectorAll('.track-item');
+            const tracks = [];
+            
+            trackInputs.forEach(track => {
+                const name = track.querySelector('.track-name').value;
+                const rating = parseFloat(track.querySelector('.track-rating').value);
+                
+                if (name && !isNaN(rating)) {
+                    tracks.push({ name, rating });
+                }
+            });
+            
+            if (tracks.length !== trackCount) {
+                alert('Preencha todas as faixas corretamente!');
+                return;
+            }
+            
+            // Calcular média
+            const totalRating = tracks.reduce((sum, track) => sum + track.rating, 0);
+            const averageRating = (totalRating / tracks.length).toFixed(1);
+            
+            // Obter imagem (se existir)
+            const fileInput = document.getElementById('album-cover');
+            let coverImage = '';
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    coverImage = e.target.result;
+                    saveAlbumData(artistName, albumName, releaseDate, evaluationDate, tracks, averageRating, coverImage);
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveAlbumData(artistName, albumName, releaseDate, evaluationDate, tracks, averageRating, coverImage);
+            }
+        }
+        
+        function saveAlbumData(artistName, albumName, releaseDate, evaluationDate, tracks, averageRating, coverImage) {
+            const newAlbum = {
+                id: Date.now(),
+                userId: currentUser.id,
+                artistName,
+                albumName,
+                releaseDate,
+                evaluationDate,
+                tracks,
+                averageRating,
+                coverImage,
+                review: '',
+                createdAt: new Date().toISOString()
+            };
+            
+            albums.push(newAlbum);
+            localStorage.setItem('albums', JSON.stringify(albums));
+            
+            alert('Álbum salvo com sucesso!');
+            resetForm();
+            loadLibrary();
+        }
+        
+        function resetForm() {
+            document.getElementById('artist-name').value = '';
+            document.getElementById('album-name').value = '';
+            document.getElementById('release-date').value = '';
+            document.getElementById('evaluation-date').value = '';
+            document.getElementById('track-count').value = '';
+            document.getElementById('track-list-container').style.display = 'none';
+            document.getElementById('track-inputs').innerHTML = '';
+            document.getElementById('album-cover').value = '';
+            document.getElementById('album-cover-preview').innerHTML = '<span>Nenhuma imagem selecionada</span>';
+        }
+        
+        // Funções da biblioteca
+        function loadLibrary() {
+            const userAlbums = albums.filter(album => album.userId === currentUser.id);
+            const artistList = document.getElementById('artist-list');
+            
+            artistList.innerHTML = '';
+            
+            if (userAlbums.length === 0) {
+                artistList.innerHTML = '<p>Nenhum álbum cadastrado ainda. Adicione seu primeiro álbum!</p>';
+                return;
+            }
+            
+            // Agrupar por artista
+            const artists = {};
+            
+            userAlbums.forEach(album => {
+                if (!artists[album.artistName]) {
+                    artists[album.artistName] = [];
+                }
+                artists[album.artistName].push(album);
+            });
+            
+            // Ordenar artistas - favoritos primeiro, depois alfabeticamente
+            const sortedArtists = Object.keys(artists).sort((a, b) => {
+                const isAFavorite = isArtistFavorite(currentUser.id, a);
+                const isBFavorite = isArtistFavorite(currentUser.id, b);
+                
+                if (isAFavorite && !isBFavorite) return -1;
+                if (!isAFavorite && isBFavorite) return 1;
+                return a.localeCompare(b);
+            });
+            
+            // Criar seção para cada artista
+            sortedArtists.forEach(artist => {
+                const artistAlbums = artists[artist];
+                
+                // Ordenar álbuns por data de lançamento (mais antigo primeiro)
+                artistAlbums.sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
+                
+                const artistSection = document.createElement('div');
+                artistSection.className = 'artist-section';
+                
+                const artistNameElement = document.createElement('h3');
+                artistNameElement.className = 'artist-name';
+                
+                // Botão de favorito
+                const favoriteBtn = document.createElement('button');
+                favoriteBtn.className = 'favorite-btn';
+                favoriteBtn.innerHTML = isArtistFavorite(currentUser.id, artist) ? '★' : '☆';
+                favoriteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavoriteArtist(currentUser.id, artist);
+                    favoriteBtn.innerHTML = isArtistFavorite(currentUser.id, artist) ? '★' : '☆';
+                    loadLibrary(); // Recarregar para reordenar
+                };
+                
+                artistNameElement.appendChild(favoriteBtn);
+                artistNameElement.appendChild(document.createTextNode(artist));
+                
+                const albumsContainer = document.createElement('div');
+                albumsContainer.className = 'albums-container';
+                
+                // Adicionar álbuns
+                artistAlbums.forEach(album => {
+                    const albumCard = document.createElement('div');
+                    albumCard.className = 'album-card';
+                    albumCard.onclick = () => openAlbumModal(album.id);
+                    
+                    // Capa do álbum
+                    let coverHtml = '<span style="color: #999;">Sem capa</span>';
+                    if (album.coverImage) {
+                        coverHtml = `<img src="${album.coverImage}" alt="${album.albumName}">`;
+                    }
+                    
+                    // Ano de lançamento
+                    const releaseYear = new Date(album.releaseDate).getFullYear();
+                    
+                    albumCard.innerHTML = `
+                        <div class="album-cover">
+                            ${coverHtml}
+                        </div>
+                        <div class="album-title">${album.albumName}</div>
+                        <div class="album-year">(${releaseYear})</div>
+                        <div class="album-stats">
+                            Faixas: ${album.tracks.length} | Média: ${album.averageRating}
+                        </div>
+                        <div class="album-actions">
+                            <button class="action-btn edit-btn" onclick="editAlbum(${album.id}); event.stopPropagation()">Editar</button>
+                            <button class="action-btn review-btn" onclick="openAlbumModal(${album.id}); event.stopPropagation()">Review</button>
+                            <button class="action-btn delete-btn" onclick="deleteAlbum(${album.id}); event.stopPropagation()">Excluir</button>
+                        </div>
+                    `;
+                    
+                    albumsContainer.appendChild(albumCard);
+                });
+                
+                artistSection.appendChild(artistNameElement);
+                artistSection.appendChild(albumsContainer);
+                artistList.appendChild(artistSection);
+            });
+        }
+        
+        // Funções de favoritos
+        function isArtistFavorite(userId, artistName) {
+            if (!favoriteArtists[userId]) return false;
+            return favoriteArtists[userId].includes(artistName);
+        }
+        
+        function toggleFavoriteArtist(userId, artistName) {
+            if (!favoriteArtists[userId]) {
+                favoriteArtists[userId] = [];
+            }
+            
+            const index = favoriteArtists[userId].indexOf(artistName);
+            if (index === -1) {
+                favoriteArtists[userId].push(artistName);
+            } else {
+                favoriteArtists[userId].splice(index, 1);
+            }
+            
+            localStorage.setItem('favoriteArtists', JSON.stringify(favoriteArtists));
+        }
+        
+        // Função de filtro de pesquisa
+        function filterAlbums() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const artistSections = document.querySelectorAll('.artist-section');
+            
+            artistSections.forEach(section => {
+                const artistName = section.querySelector('.artist-name').textContent.toLowerCase();
+                const albumCards = section.querySelectorAll('.album-card');
+                let hasMatches = false;
+                
+                // Verificar se o artista corresponde
+                if (artistName.includes(searchTerm)) {
+                    hasMatches = true;
+                } else {
+                    // Verificar álbuns deste artista
+                    albumCards.forEach(card => {
+                        const albumTitle = card.querySelector('.album-title').textContent.toLowerCase();
+                        if (albumTitle.includes(searchTerm)) {
+                            hasMatches = true;
+                        }
+                    });
+                }
+                
+                // Mostrar/ocultar seção com base nos resultados
+                section.style.display = hasMatches ? 'block' : 'none';
+                
+                // Mostrar/ocultar álbuns individuais dentro da seção
+                if (searchTerm && hasMatches) {
+                    albumCards.forEach(card => {
+                        const albumTitle = card.querySelector('.album-title').textContent.toLowerCase();
+                        card.style.display = albumTitle.includes(searchTerm) ? 'block' : 'none';
+                    });
+                } else {
+                    albumCards.forEach(card => {
+                        card.style.display = 'block';
+                    });
+                }
+            });
+        }
+        // Funções do modal do álbum
+        function openAlbumModal(albumId) {
+            const album = albums.find(a => a.id === albumId);
+            if (!album) return;
+            
+            currentAlbumId = albumId;
+            
+            // Preencher informações do álbum
+            document.getElementById('modal-album-artist').textContent = album.artistName;
+            document.getElementById('modal-album-title').textContent = album.albumName;
+            document.getElementById('modal-album-year').textContent = `Lançamento: ${formatDate(album.releaseDate)} | Avaliado em: ${formatDate(album.evaluationDate)}`;
+            document.getElementById('modal-track-count').textContent = album.tracks.length;
+            document.getElementById('modal-average-rating').textContent = album.averageRating;
+            
+            // Capa do álbum
+            const modalCover = document.getElementById('modal-album-cover');
+            modalCover.innerHTML = album.coverImage ? 
+                `<img src="${album.coverImage}" alt="${album.albumName}">` : 
+                '<span>Sem capa</span>';
+            
+            // Lista de faixas
+            const trackList = document.getElementById('modal-track-list');
+            trackList.innerHTML = '';
+            
+            album.tracks.forEach(track => {
+                const trackItem = document.createElement('li');
+                trackItem.className = 'track-item-modal';
+                trackItem.innerHTML = `
+                    <span>${track.name}</span>
+                    <span class="track-rating-modal">${track.rating.toFixed(1)}</span>
+                `;
+                trackList.appendChild(trackItem);
+            });
+            
+            // Review
+            const reviewContent = document.getElementById('album-review-content');
+            reviewContent.innerHTML = album.review ? 
+                `<p>${album.review}</p>` : 
+                'Nenhuma review cadastrada ainda.';
+            
+            // Textarea da review
+            document.getElementById('review-textarea').value = album.review || '';
+            
+            // Mostrar modal
+            document.getElementById('album-modal').style.display = 'flex';
+        }
+        
+        function closeAlbumModal() {
+            document.getElementById('album-modal').style.display = 'none';
+            currentAlbumId = null;
+        }
+        
+        function saveReview() {
+            if (!currentAlbumId) return;
+            
+            const reviewText = document.getElementById('review-textarea').value;
+            const albumIndex = albums.findIndex(a => a.id === currentAlbumId);
+            
+            if (albumIndex !== -1) {
+                albums[albumIndex].review = reviewText;
+                localStorage.setItem('albums', JSON.stringify(albums));
+                
+                // Atualizar exibição
+                const reviewContent = document.getElementById('album-review-content');
+                reviewContent.innerHTML = reviewText ? 
+                    `<p>${reviewText}</p>` : 
+                    'Nenhuma review cadastrada ainda.';
+                
+                alert('Review salva com sucesso!');
+            }
+        }
+        
+        function deleteAlbum(albumId, reload = true) {
+            if (confirm('Tem certeza que deseja excluir este álbum permanentemente?')) {
+                albums = albums.filter(album => album.id !== albumId);
+                localStorage.setItem('albums', JSON.stringify(albums));
+                
+                if (reload) {
+                    loadLibrary();
+                }
+                closeAlbumModal();
+            }
+        }
+        
+        function editAlbum(albumId) {
+            const album = albums.find(a => a.id === albumId);
+            
+            if (!album) return;
+            
+            // Preencher formulário com dados do álbum
+            document.getElementById('artist-name').value = album.artistName;
+            document.getElementById('album-name').value = album.albumName;
+            document.getElementById('release-date').value = album.releaseDate;
+            document.getElementById('evaluation-date').value = album.evaluationDate;
+            document.getElementById('track-count').value = album.tracks.length;
+            
+            // Gerar inputs para as faixas
+            generateTrackInputs();
+            
+            // Preencher as faixas
+            setTimeout(() => {
+                const trackInputs = document.querySelectorAll('.track-item');
+                
+                album.tracks.forEach((track, index) => {
+                    if (trackInputs[index]) {
+                        trackInputs[index].querySelector('.track-name').value = track.name;
+                        trackInputs[index].querySelector('.track-rating').value = track.rating;
+                    }
+                });
+            }, 100);
+            
+            // Exibir capa do álbum se existir
+            if (album.coverImage) {
+                const preview = document.getElementById('album-cover-preview');
+                preview.innerHTML = `<img src="${album.coverImage}" alt="Capa do Álbum">`;
+            }
+            
+            // Remover o álbum antigo
+            deleteAlbum(albumId, false);
+            
+            // Rolagem suave para o formulário
+            document.querySelector('.evaluation-form').scrollIntoView({ behavior: 'smooth' });
+            
+            // Fechar modal se estiver aberto
+            closeAlbumModal();
+        }
+        
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+        
+        // Funções de configurações
+        function openSettings() {
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+        
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+        
+        function changeThemeColor(type, color) {
+            // Remover seleção de todas as opções deste tipo
+            document.querySelectorAll(`.color-option`).forEach(option => {
+                if (option.style.backgroundColor === color || 
+                    (type === 'bg' && color === '#1a1a2e' && !option.style.backgroundColor)) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Atualizar prévia
+            if (type === 'bg') {
+                document.documentElement.style.setProperty('--bg-color', color);
+                document.documentElement.style.setProperty('--card-color', darkenColor(color, 20));
+                document.querySelector('.theme-preview').style.setProperty('--preview-bg', color);
+            } else if (type === 'text') {
+                document.documentElement.style.setProperty('--text-color', color);
+                document.querySelector('.theme-preview').style.setProperty('--preview-text', color);
+            } else if (type === 'accent') {
+                document.documentElement.style.setProperty('--accent-color', color);
+            }
+        }
+        
+        function darkenColor(color, percent) {
+            // Função simples para escurecer uma cor (para o card)
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            
+            return '#' + (
+                0x1000000 +
+                (R < 0 ? 0 : R) * 0x10000 +
+                (G < 0 ? 0 : G) * 0x100 +
+                (B < 0 ? 0 : B)
+            ).toString(16).slice(1);
+        }
+        
+        function saveThemeSettings() {
+            const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+            
+            if (currentUser) {
+                currentUser.theme = { bgColor, textColor, accentColor };
+                
+                // Atualizar usuário no localStorage
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+            }
+            
+            closeSettings();
+        }
+        
+        // Carregar tema do usuário (se existir)
+        function loadUserTheme() {
+            if (currentUser && currentUser.theme) {
+                document.documentElement.style.setProperty('--bg-color', currentUser.theme.bgColor);
+                document.documentElement.style.setProperty('--text-color', currentUser.theme.textColor);
+                document.documentElement.style.setProperty('--accent-color', currentUser.theme.accentColor);
+                document.documentElement.style.setProperty('--card-color', darkenColor(currentUser.theme.bgColor, 20));
+            }
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar se há usuário logado (para desenvolvimento)
+            if (users.length === 0) {
+                // Criar usuário de exemplo
+                users.push({
+                    id: 1,
+                    name: 'Usuário Exemplo',
+                    email: 'usuario@exemplo.com',
+                    password: '123456'
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Carregar artistas favoritos
+            const storedFavorites = localStorage.getItem('favoriteArtists');
+            if (storedFavorites) {
+                favoriteArtists = JSON.parse(storedFavorites);
+            }
+        });
+    </script>
+</body>
+</html>
