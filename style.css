@@ -1,0 +1,62 @@
+body {
+  background: #0d0d0d;
+  color: #eaeaea;}
+  
+header {
+  text-align: center;}
+  
+h1 {
+  color: #e50914;}
+  
+ .tudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;}
+  
+.caixa {
+  border-radius: 10px;
+  width: 90%;
+  max-width: 750px;
+  transition: .3s;}
+
+.caixa:hover {
+  transform: scale(1.0);
+  box-shadow: 0 0 20px #e50914;}
+
+.ondeclica {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #111;}
+  
+
+.ondeclica img {
+  width: 60px;
+  height: 80px;
+  border-radius: 6px;
+  object-fit: cover;}
+
+.gaveta {background:#141414;padding:15px;}
+
+.gaveta strong {
+  color: #e50914;}
+
+.gaveta img {
+  width: 60%;
+  margin: auto;
+  display: block;
+  border-radius: 10px;}
+
+.questionario, .botao {
+  display: block;
+  width: 250px;
+  padding: 5px;
+  border: none;
+  background:#111111;
+  color: #eaeaea;
+}
+.botao {
+  background: #e50914;
+}
